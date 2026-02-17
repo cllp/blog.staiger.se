@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technology Blog | Staiger</title>
+    <meta name="description" content="Technology, architecture, and enterprise consulting insights from Claes-Philip Staiger. Exploring integration strategies, digital transformation, and modern infrastructure practices.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: {
+                            50: '#f0f4f8',
+                            100: '#d9e2ec',
+                            200: '#bcccdc',
+                            300: '#9fb3c8',
+                            400: '#829ab1',
+                            500: '#627d98',
+                            600: '#486581',
+                            700: '#334e68',
+                            800: '#243b53',
+                            900: '#102a43',
+                            950: '#0a1929',
+                        },
+                        accent: {
+                            400: '#4fd1c5',
+                            500: '#38b2ac',
+                            600: '#319795',
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .gradient-text {
+            background: linear-gradient(135deg, #4fd1c5 0%, #38b2ac 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .card-hover { transition: all 0.3s ease; }
+        .card-hover:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+        .fade-in { animation: fadeIn 0.8s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="font-sans antialiased text-navy-800 bg-navy-950">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-navy-950/95 backdrop-blur-sm border-b border-navy-800/50">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="https://staiger.se" class="flex items-center gap-3 text-white font-medium tracking-[0.25em] uppercase text-xs">
+                    Claes-Philip Staiger
+                </a>
+                <div class="flex items-center gap-4">
+                    <a href="https://staiger.se" class="text-navy-300 hover:text-white text-sm transition-colors">
+                        <span data-lang="en">← Back to staiger.se</span>
+                        <span data-lang="sv" style="display:none">← Tillbaka till staiger.se</span>
+                    </a>
+                    <div class="flex items-center gap-1 ml-2">
+                        <button id="btn-sv" onclick="setLang('sv')" class="px-2 py-1 text-xs text-navy-400 hover:text-white transition-colors border border-transparent rounded">SV</button>
+                        <span class="text-navy-600 text-xs">|</span>
+                        <button id="btn-en" onclick="setLang('en')" class="px-2 py-1 text-xs text-white transition-colors border border-navy-600 rounded">EN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="pt-32 pb-16 px-6 lg:px-8 bg-gradient-to-b from-navy-900 to-navy-950">
+        <div class="max-w-7xl mx-auto text-center fade-in">
+            <h1 class="text-5xl lg:text-6xl font-display font-bold mb-4">
+                <span class="gradient-text">Technology Blog</span>
+            </h1>
+            <p class="text-navy-300 text-lg max-w-2xl mx-auto mb-4" id="heroSubtitle">
+                Insights on enterprise architecture, digital transformation, and technology strategy
+            </p>
+            <p class="text-navy-400 text-sm" id="heroCount">11 articles on integration, DevOps, cloud infrastructure, and enterprise consulting</p>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="sticky top-16 bg-navy-900/95 backdrop-blur-sm border-b border-navy-800/50 z-40">
+        <div class="max-w-7xl mx-auto px-6 lg:px-8 py-6">
+            <div class="flex flex-wrap gap-2 justify-center">
+                <button class="filterBtn all-articles px-4 py-2 rounded-full text-sm font-medium text-white bg-accent-500 hover:bg-accent-600 transition-colors" data-category="all" id="filterAll">
+                    <span data-lang="en">All Articles</span>
+                    <span data-lang="sv" style="display:none">Alla artiklar</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="Integration">
+                    <span data-lang="en">Integration</span>
+                    <span data-lang="sv" style="display:none">Integration</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="Architecture">
+                    <span data-lang="en">Architecture</span>
+                    <span data-lang="sv" style="display:none">Arkitektur</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="DevOps">
+                    <span data-lang="en">DevOps</span>
+                    <span data-lang="sv" style="display:none">DevOps</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="Security">
+                    <span data-lang="en">Security</span>
+                    <span data-lang="sv" style="display:none">Säkerhet</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="Innovation">
+                    <span data-lang="en">Innovation</span>
+                    <span data-lang="sv" style="display:none">Innovation</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="Consulting">
+                    <span data-lang="en">Consulting</span>
+                    <span data-lang="sv" style="display:none">Konsultation</span>
+                </button>
+                <button class="filterBtn px-4 py-2 rounded-full text-sm font-medium text-navy-300 bg-navy-800 hover:bg-navy-700 transition-colors" data-category="Strategy">
+                    <span data-lang="en">Strategy</span>
+                    <span data-lang="sv" style="display:none">Strategi</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="py-16 px-6 lg:px-8 bg-navy-950">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Article 1 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Innovation">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Innovation</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Three-Phase Innovation Workshop</span>
+                            <span data-lang="sv" style="display:none">Tre-fas innovationsworkshop</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">A structured approach to innovation that combines discovery, ideation, and validation phases. Learn how to systematically identify opportunities and build organizational capability for continuous innovation.</span>
+                            <span data-lang="sv" style="display:none">Ett strukturerat tillvägagångssätt för innovation som kombinerar upptäckts-, idé- och valideringsfaser. Lär dig hur du systematiskt identifierar möjligheter och bygger organisatorisk förmåga för kontinuerlig innovation.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>March 2016</span>
+                            <a href="articles/three-phase-innovation-workshop.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Integration, Strategy">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Integration</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Strategy</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Enterprise Integration Strategy</span>
+                            <span data-lang="sv" style="display:none">Strategi för företagsintegration</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Discover how to design integration architectures that connect disparate systems while maintaining flexibility and scalability. Explores patterns, governance, and organizational approaches for enterprise-wide integration.</span>
+                            <span data-lang="sv" style="display:none">Upptäck hur du designar integrationsarkitekturer som kopplar samman olika system samtidigt som flexibilitet och skalbarhet bibehålls. Utforskar mönster, styrning och organisatoriska metoder för företagsövergripande integration.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>November 2016</span>
+                            <a href="articles/enterprise-integration-strategy.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Consulting">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Consulting</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">The Art of Consulting</span>
+                            <span data-lang="sv" style="display:none">Konsten att konsulta</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Master the principles and practice of strategic consulting. Explore how to create genuine value for clients, build trusted advisory relationships, and deliver measurable business impact through structured approaches.</span>
+                            <span data-lang="sv" style="display:none">Behärska principerna och praktiken för strategisk konsultation. Utforska hur du skapar genuint värde för kunder, bygger betrodda rådgivningsrelationer och levererar mätbar affärspåverkan genom strukturerade metoder.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>June 2017</span>
+                            <a href="articles/art-of-consulting.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 4 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Architecture, Strategy">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Architecture</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Strategy</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Enterprise Target Architecture</span>
+                            <span data-lang="sv" style="display:none">Målarkitektur för företag</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Design and implement enterprise target architectures that guide technology strategy. Learn frameworks for architecture definition, governance models, and roadmap planning for large-scale transformations.</span>
+                            <span data-lang="sv" style="display:none">Designa och implementera företagsmålarkitekturer som vägleder teknikstrategi. Lär dig ramverk för arkitekturdefinition, styrningsmodeller och vägkarteplanering för storskaliga transformationer.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>February 2018</span>
+                            <a href="articles/enterprise-target-architecture.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 5 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Consulting, Strategy">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Consulting</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Strategy</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Execution & Project Recovery</span>
+                            <span data-lang="sv" style="display:none">Genomförande & projektåterhämtning</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Transform ambitious plans into results through disciplined execution. Understand techniques for project assessment, recovery strategies, stakeholder management, and building execution capability in organizations.</span>
+                            <span data-lang="sv" style="display:none">Förvandla ambitiösa planer till resultat genom disciplinerat genomförande. Förstå tekniker för projektbedömning, återhämtningsstrategier, intressenthantering och att bygga genomförandeförmåga i organisationer.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>September 2018</span>
+                            <a href="articles/execution-project-recovery.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 6 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Innovation, Strategy">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Innovation</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Strategy</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Digital Transformation & Bimodal IT</span>
+                            <span data-lang="sv" style="display:none">Digital transformation & bimodal IT</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Navigate digital transformation by balancing innovation with operational excellence. Explore bimodal IT approaches that manage legacy systems while accelerating digital initiatives.</span>
+                            <span data-lang="sv" style="display:none">Navigera digital transformation genom att balansera innovation med operativ excellens. Utforska bimodala IT-metoder som hanterar legacy-system samtidigt som digitala initiativ accelereras.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>April 2019</span>
+                            <a href="articles/digital-transformation-bimodal-it.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 7 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Architecture, DevOps">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Architecture</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">DevOps</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Kubernetes & Cloud-Native Infrastructure</span>
+                            <span data-lang="sv" style="display:none">Kubernetes & molnbaserad infrastruktur</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Master container orchestration and cloud-native patterns. Understand Kubernetes architecture, deployment strategies, scaling, and the organizational transformation required for cloud-native operations.</span>
+                            <span data-lang="sv" style="display:none">Behärska containerorkestrering och molnbaserade mönster. Förstå Kubernetes-arkitektur, distributionsstrategier, skalning och den organisatoriska transformation som krävs för molnbaserad drift.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>January 2020</span>
+                            <a href="articles/kubernetes-cloud-native-guide.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 8 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Architecture, Integration">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Architecture</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Integration</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Microservices in Enterprise Architecture</span>
+                            <span data-lang="sv" style="display:none">Mikrotjänster i företagsarkitektur</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Design distributed systems using microservices patterns. Explore inner and outer architecture, service boundaries, data consistency, and orchestration versus choreography trade-offs in enterprise environments.</span>
+                            <span data-lang="sv" style="display:none">Designa distribuerade system med mikrotjänstmönster. Utforska inre och yttre arkitektur, tjänstegränser, datakonsistens och avvägningar mellan orkestrering och koreografi i företagsmiljöer.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>August 2021</span>
+                            <a href="articles/microservices-enterprise-architecture.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 9 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Security">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Security</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Public Key Infrastructure & Digital Trust</span>
+                            <span data-lang="sv" style="display:none">PKI & digitalt förtroende</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Understand PKI fundamentals for securing digital communications. Explore certificate management, trust chains, TLS/SSL, zero-trust architectures, and modern challenges in building trusted systems.</span>
+                            <span data-lang="sv" style="display:none">Förstå PKI-grunder för att säkra digital kommunikation. Utforska certifikathantering, förtroendekedgor, TLS/SSL, zero-trust-arkitekturer och moderna utmaningar med att bygga betrodda system.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>March 2022</span>
+                            <a href="articles/pki-digital-trust.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 10 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="Strategy, Architecture">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Strategy</span>
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">Architecture</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">Technology Strategy: Architecture as Competitive Advantage</span>
+                            <span data-lang="sv" style="display:none">Teknikstrategi: Arkitektur som konkurrensfördel</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Align technology decisions with business strategy. Learn Wardley mapping, platform thinking, architecture decision records, and technology radar frameworks for building sustainable competitive advantage.</span>
+                            <span data-lang="sv" style="display:none">Anpassa teknikbeslut med affärsstrategi. Lär dig Wardley-kartläggning, plattformstänkande, arkitekturbeslutsdokumentation och teknikradarramverk för att bygga hållbar konkurrensfördel.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>October 2023</span>
+                            <a href="articles/technology-strategy-competitive-advantage.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 11 -->
+                <article class="article-card card-hover bg-navy-900 rounded-lg overflow-hidden border border-navy-800 hover:border-accent-500 transition-colors" data-categories="DevOps">
+                    <div class="h-48 bg-gradient-to-br from-accent-500/20 to-navy-800 flex items-center justify-center">
+                        <div class="text-4xl font-display text-accent-500/50">•••</div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex gap-2 mb-3">
+                            <span class="category-tag px-3 py-1 bg-navy-800 text-accent-400 text-xs rounded-full font-medium">DevOps</span>
+                        </div>
+                        <h3 class="text-xl font-display font-semibold text-white mb-2">
+                            <span data-lang="en">DevOps Practices & Continuous Delivery</span>
+                            <span data-lang="sv" style="display:none">DevOps-praxis & kontinuerlig leverans</span>
+                        </h3>
+                        <p class="text-navy-300 text-sm mb-4">
+                            <span data-lang="en">Build high-performing delivery organizations through DevOps culture. Explore CI/CD pipelines, infrastructure-as-code, GitOps, observability, platform engineering, and DORA metrics for measuring delivery excellence.</span>
+                            <span data-lang="sv" style="display:none">Bygg högpresterande leveransorganisationer genom DevOps-kultur. Utforska CI/CD-pipelines, infrastruktur-som-kod, GitOps, observerbarhet, plattformsingenjörskonst och DORA-mätvärden för att mäta leveransexcellens.</span>
+                        </p>
+                        <div class="flex justify-between items-center text-xs text-navy-400">
+                            <span>February 2025</span>
+                            <a href="articles/devops-continuous-delivery.html" class="text-accent-400 hover:text-accent-300 font-medium">
+                                <span data-lang="en">Read →</span>
+                                <span data-lang="sv" style="display:none">Läs →</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-navy-900 border-t border-navy-800/50 py-12 px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h4 class="text-white font-display font-semibold mb-4">About</h4>
+                    <p class="text-navy-400 text-sm" id="footerAbout">
+                        This blog explores enterprise technology, architecture patterns, and digital transformation strategies from years of consulting experience.
+                    </p>
+                </div>
+                <div>
+                    <h4 class="text-white font-display font-semibold mb-4" id="footerConnect">Connect</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="https://staiger.se" class="text-navy-400 hover:text-accent-400 transition-colors">Claes-Philip Staiger</a></li>
+                        <li><a href="https://claes-philip.staiger.se" class="text-navy-400 hover:text-accent-400 transition-colors">Professional Profile</a></li>
+                        <li><a href="mailto:contact@staiger.se" class="text-navy-400 hover:text-accent-400 transition-colors" id="footerEmail">Email</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-display font-semibold mb-4" id="footerTopics">Topics</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li><a href="#" class="text-navy-400 hover:text-accent-400 transition-colors">Enterprise Architecture</a></li>
+                        <li><a href="#" class="text-navy-400 hover:text-accent-400 transition-colors">Digital Transformation</a></li>
+                        <li><a href="#" class="text-navy-400 hover:text-accent-400 transition-colors">Cloud & DevOps</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-navy-800/50 pt-8 text-center text-navy-400 text-sm">
+                <p id="footerCopy">&copy; 2016–2025 Claes-Philip Staiger. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Language toggle
+        let currentLang = 'en';
+        const translations = {
+            en: {
+                heroSubtitle: 'Insights on enterprise architecture, digital transformation, and technology strategy',
+                heroCount: '11 articles on integration, DevOps, cloud infrastructure, and enterprise consulting',
+                footerAbout: 'This blog explores enterprise technology, architecture patterns, and digital transformation strategies from years of consulting experience.',
+                footerConnect: 'Connect',
+                footerTopics: 'Topics',
+                footerEmail: 'Email',
+                footerCopy: '© 2016–2025 Claes-Philip Staiger. All rights reserved.'
+            },
+            sv: {
+                heroSubtitle: 'Insikter om enterprisearchitektur, digital transformering och teknikstrategi',
+                heroCount: '11 artiklar om integration, DevOps, molninfrastruktur och företagskonsultation',
+                footerAbout: 'Den här bloggen utforskar företagsteknik, arkitekturmönster och digitala transformeringsstrategier från år av konsultupplevelse.',
+                footerConnect: 'Kontakt',
+                footerTopics: 'Ämnen',
+                footerEmail: 'E-post',
+                footerCopy: '© 2016–2025 Claes-Philip Staiger. Alla rättigheter förbehållna.'
+            }
+        };
+
+        function setLang(lang) {
+            currentLang = lang;
+            updateLanguage();
+        }
+
+        function updateLanguage() {
+            const t = translations[currentLang];
+            document.getElementById('heroSubtitle').textContent = t.heroSubtitle;
+            document.getElementById('heroCount').textContent = t.heroCount;
+            document.getElementById('footerAbout').textContent = t.footerAbout;
+            document.getElementById('footerConnect').textContent = t.footerConnect;
+            document.getElementById('footerTopics').textContent = t.footerTopics;
+            document.getElementById('footerEmail').textContent = t.footerEmail;
+            document.getElementById('footerCopy').textContent = t.footerCopy;
+            document.documentElement.lang = currentLang;
+
+            // Toggle all data-lang elements
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.style.display = el.getAttribute('data-lang') === currentLang ? '' : 'none';
+            });
+
+            // Update button styling
+            document.getElementById('btn-en').classList.toggle('text-white', currentLang === 'en');
+            document.getElementById('btn-en').classList.toggle('border-navy-600', currentLang === 'en');
+            document.getElementById('btn-en').classList.toggle('text-navy-400', currentLang !== 'en');
+            document.getElementById('btn-en').classList.toggle('border-transparent', currentLang !== 'en');
+            document.getElementById('btn-sv').classList.toggle('text-white', currentLang === 'sv');
+            document.getElementById('btn-sv').classList.toggle('border-navy-600', currentLang === 'sv');
+            document.getElementById('btn-sv').classList.toggle('text-navy-400', currentLang !== 'sv');
+            document.getElementById('btn-sv').classList.toggle('border-transparent', currentLang !== 'sv');
+        }
+
+        // Filter functionality
+        document.querySelectorAll('.filterBtn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filterBtn').forEach(b => {
+                    b.classList.remove('bg-accent-500', 'hover:bg-accent-600');
+                    b.classList.add('bg-navy-800', 'hover:bg-navy-700');
+                });
+                this.classList.remove('bg-navy-800', 'hover:bg-navy-700');
+                this.classList.add('bg-accent-500', 'hover:bg-accent-600');
+
+                const category = this.getAttribute('data-category');
+                filterArticles(category);
+            });
+        });
+
+        function filterArticles(category) {
+            document.querySelectorAll('.article-card').forEach(card => {
+                const categories = card.getAttribute('data-categories');
+                if (category === 'all' || categories.includes(category)) {
+                    card.style.display = '';
+                    card.classList.add('fade-in');
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+</html>

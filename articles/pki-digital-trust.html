@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Understand Public Key Infrastructure fundamentals for securing digital communications. Explore certificates, trust chains, TLS/SSL, zero-trust architectures, and modern security challenges.">
+    <meta name="keywords" content="PKI, public key infrastructure, digital certificates, TLS, SSL, zero-trust, cryptography, digital security">
+    <meta name="author" content="Claes-Philip Staiger">
+    <meta name="image" content="https://blog.staiger.se/og-image.jpg">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Public Key Infrastructure & Digital Trust">
+    <meta property="og:description" content="Understand PKI fundamentals for securing digital communications and building trusted systems.">
+    <meta property="og:url" content="https://blog.staiger.se/articles/pki-digital-trust">
+    <meta property="og:image" content="https://blog.staiger.se/og-image.jpg">
+    <meta property="twitter:card" content="summary_large_image">
+    <title>Public Key Infrastructure & Digital Trust</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #1a1a2e;
+            --accent-color: #0066cc;
+            --light-bg: #f8f9fa;
+            --border-color: #e0e0e0;
+            --text-color: #333;
+            --light-text: #666;
+            --line-height: 1.7;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            color: var(--primary-color);
+            background-color: #ffffff;
+            line-height: var(--line-height);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .byline {
+            color: var(--light-text);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .lang-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .lang-toggle button {
+            padding: 6px 16px;
+            border: 2px solid var(--accent-color);
+            background: var(--accent-color);
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .lang-toggle button:hover {
+            opacity: 0.8;
+        }
+
+        .lang-toggle button.inactive {
+            background: transparent;
+            color: var(--accent-color);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 16px;
+            color: var(--primary-color);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-top: 28px;
+            margin-bottom: 14px;
+            color: var(--primary-color);
+        }
+
+        p {
+            margin-bottom: 16px;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        blockquote {
+            border-left: 4px solid var(--accent-color);
+            padding: 16px 20px;
+            margin: 24px 0;
+            background-color: var(--light-bg);
+            font-style: italic;
+            color: var(--light-text);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+        }
+
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--light-bg);
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        strong {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+
+        footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid var(--border-color);
+            font-size: 14px;
+            color: var(--light-text);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            h3 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            h1, h2, h3 {
+                page-break-after: avoid;
+            }
+
+            p {
+                orphans: 3;
+                widows: 3;
+            }
+
+            a {
+                color: var(--primary-color);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">← Back to Blog</a>
+
+        <header>
+            <div class="byline">
+                <span data-lang="en">By Claes-Philip Staiger | March 2022</span>
+                <span data-lang="sv" style="display:none">Av Claes-Philip Staiger | Mars 2022</span>
+            </div>
+            <div class="lang-toggle">
+                <button onclick="setLang('en')" id="btn-en">English</button>
+                <button onclick="setLang('sv')" id="btn-sv" class="inactive">Svenska</button>
+            </div>
+            <h1 data-lang="en">PKI and Digital Trust: Building Secure Digital Infrastructure</h1>
+            <h1 data-lang="sv" style="display:none">PKI och digitalt förtroende: Bygga säker digital infrastruktur</h1>
+        </header>
+
+        <article>
+            <div data-lang="en">
+                <p>In an increasingly digital world, the ability to establish trust in online interactions is paramount. Organizations and individuals must be confident that digital communications are authentic, that data has not been tampered with, and that only intended recipients can access sensitive information. Public Key Infrastructure (PKI) provides the foundational mechanisms for establishing digital trust at scale.</p>
+
+                <p>PKI is not new technology. The fundamental concepts emerged in the late 1970s with the development of public key cryptography. However, implementation and deployment of PKI has proven far more challenging than the elegant mathematics underlying it. Many PKI deployments have struggled with complexity, cost, and organizational challenges. Yet as organizations navigate zero-trust security models, accelerating digital transformation, and increasing cyber threats, understanding PKI fundamentals becomes increasingly critical.</p>
+
+                <h2>Cryptographic Foundations</h2>
+
+                <p>PKI is built on public key cryptography, which differs fundamentally from symmetric cryptography that has been used for millennia.</p>
+
+                <h3>Symmetric vs. Asymmetric Cryptography</h3>
+
+                <p>In symmetric cryptography, a single shared secret key encrypts and decrypts data. This approach is computationally efficient and suitable for protecting data at rest or in transit when parties have previously shared a key. However, symmetric cryptography has a fundamental problem: how do parties securely share the key in the first place?</p>
+
+                <p>Public key cryptography solves this through asymmetric key pairs:</p>
+
+                <ul>
+                    <li><strong>Public Key:</strong> Can be freely shared and distributed; used to encrypt messages or verify digital signatures</li>
+                    <li><strong>Private Key:</strong> Kept secret by the owner; used to decrypt messages or create digital signatures</li>
+                </ul>
+
+                <p>The mathematics of public key cryptography ensures that only the holder of a private key can decrypt messages encrypted with the corresponding public key, or create signatures that can be verified with the public key.</p>
+
+                <h3>Public Key Cryptography Applications</h3>
+
+                <p>Public key cryptography enables two critical security functions:</p>
+
+                <ul>
+                    <li><strong>Confidentiality:</strong> Encrypt data with recipient's public key; only recipient with private key can decrypt</li>
+                    <li><strong>Authentication & Integrity:</strong> Sign data with your private key; recipient uses public key to verify signature originated from you and data was not modified</li>
+                </ul>
+
+                <p>Digital signatures are particularly powerful. By signing data with a private key, the signer proves they possess that key while also proving the data has not been modified after signing. Recipient can verify both the source and integrity using only the public key—no need to transmit secrets.</p>
+
+                <h2>The Trust Problem</h2>
+
+                <p>While public key cryptography provides elegant mathematical solutions, it creates a new problem: how do you trust that a public key actually belongs to the person or entity claiming to use it?</p>
+
+                <h3>The Man-in-the-Middle Attack</h3>
+
+                <p>Imagine attempting to communicate securely with a colleague. You obtain what you believe is their public key and encrypt a message with it. An attacker intercepts your communication, replaces the public key with their own, and forwards it to your colleague. You encrypt with the attacker's key, the attacker decrypts (learning the message), and re-encrypts with your colleague's actual key. Your colleague receives the message, never knowing the attacker read it in transit.</p>
+
+                <p>This man-in-the-middle attack is possible precisely because you have no proof the public key belongs to your colleague. The public key is just a string of numbers; anyone could generate a key pair claiming it belongs to someone else.</p>
+
+                <h3>Solving Trust Through Certificates</h3>
+
+                <p>Public key certificates solve this problem through a chain of trust. A certificate is a digitally signed statement that binds a public key to an identity (a person, organization, or system). The signature proves that a trusted authority verified the identity before issuing the certificate.</p>
+
+                <p>A certificate typically contains:</p>
+
+                <ul>
+                    <li>Subject identity (person or system the certificate is issued to)</li>
+                    <li>Subject's public key</li>
+                    <li>Issuer identity (the authority that verified and signed the certificate)</li>
+                    <li>Validity period (when the certificate is valid)</li>
+                    <li>Serial number and other technical details</li>
+                    <li>Digital signature from issuer</li>
+                </ul>
+
+                <p>When you receive a certificate, you can verify the issuer's signature using the issuer's public key. This proves the issuer signed this certificate. But how do you trust the issuer's public key? Through their certificate, which is signed by a certificate authority you trust.</p>
+
+                <h2>Public Key Infrastructure Architecture</h2>
+
+                <p>PKI is the set of roles, policies, and procedures for creating, managing, and using public key certificates at scale.</p>
+
+                <h3>Certificate Authorities</h3>
+
+                <p>A Certificate Authority (CA) is a trusted entity that verifies identities and issues digital certificates. The CA's public key is widely distributed (often pre-installed in operating systems and browsers) so anyone can verify certificates the CA has signed.</p>
+
+                <p>CAs perform critical functions:</p>
+
+                <ul>
+                    <li><strong>Identity Verification:</strong> Validate that the entity requesting the certificate actually owns the claimed identity</li>
+                    <li><strong>Certificate Issuance:</strong> Create and digitally sign certificates binding the verified identity to a public key</li>
+                    <li><strong>Key Lifecycle Management:</strong> Maintain secure processes for key generation and storage</li>
+                    <li><strong>Certificate Revocation:</strong> Maintain lists of certificates that are no longer valid before expiration</li>
+                </ul>
+
+                <h3>Trust Hierarchy: Root, Intermediate, and End-Entity Certificates</h3>
+
+                <p>Certificate trust forms a hierarchy to manage risk. Root CAs maintain keys offline in highly secure environments. Their keys sign intermediate CAs' certificates. Intermediate CAs issue end-entity certificates to users, systems, or applications.</p>
+
+                <p>This hierarchy enables:</p>
+
+                <ul>
+                    <li><strong>Risk Isolation:</strong> If an intermediate CA is compromised, root authority is unaffected</li>
+                    <li><strong>Operational Flexibility:</strong> Intermediate CAs can be updated or rotated without affecting root CA</li>
+                    <li><strong>Scalability:</strong> Multiple intermediate CAs can issue certificates in parallel, avoiding single bottleneck</li>
+                </ul>
+
+                <p>Trust chains connect end-entity certificates to root authorities. When verifying an end-entity certificate, validation traverses the chain: verify end-entity signature was created by intermediate CA, verify intermediate certificate's signature was created by root CA, verify root CA is one you trust.</p>
+
+                <h2>TLS/SSL: Practical PKI Application</h2>
+
+                <p>Transport Layer Security (TLS) is the most visible and important PKI application. Every secure web connection uses TLS to establish encrypted communication and verify server identity.</p>
+
+                <h3>TLS Handshake Overview</h3>
+
+                <p>When you visit a secure website, the browser and server perform a TLS handshake:</p>
+
+                <ol>
+                    <li>Client contacts server and requests secure connection</li>
+                    <li>Server responds with its certificate and public key</li>
+                    <li>Client verifies certificate (checking signature chain to trusted root CAs)</li>
+                    <li>Client and server use public key cryptography to negotiate a shared session key</li>
+                    <li>Subsequent communication is encrypted with the negotiated session key (symmetric cryptography)</li>
+                </ol>
+
+                <p>This design leverages strengths of both approaches: public key cryptography establishes trust and negotiates keys, while symmetric cryptography provides efficient bulk encryption.</p>
+
+                <h3>Certificate Validation in Practice</h3>
+
+                <p>When browsers verify certificates, they check:</p>
+
+                <ul>
+                    <li><strong>Signature Validity:</strong> Certificate signature was created by a trusted CA</li>
+                    <li><strong>Validity Period:</strong> Certificate is currently valid (not expired or not-yet-valid)</li>
+                    <li><strong>Revocation Status:</strong> Certificate has not been revoked by the CA</li>
+                    <li><strong>Domain Match:</strong> Certificate's subject matches the domain being visited</li>
+                    <li><strong>Extended Validation:</strong> For highly sensitive sites, CA performed enhanced identity verification</li>
+                </ul>
+
+                <p>Certificate revocation is particularly important. If a private key is compromised, the CA can revoke the certificate, placing it on a Certificate Revocation List (CRL) or using Online Certificate Status Protocol (OCSP) to indicate the certificate is no longer valid.</p>
+
+                <h2>Modern PKI Challenges</h2>
+
+                <p>While PKI has enabled secure digital communication for decades, modern threats and requirements have created new challenges.</p>
+
+                <h3>Certificate Proliferation and Management</h3>
+
+                <p>Modern organizations deploy certificates across vast infrastructure: web servers, application servers, microservices, IoT devices, and internal systems. Managing thousands or millions of certificates, tracking expiration dates, and automating renewal has become a significant operational challenge. The shift to cloud infrastructure and containerization exacerbates this as systems are created and destroyed rapidly.</p>
+
+                <p>Traditional PKI processes designed for a handful of web servers cannot scale to environments with continuous deployment and ephemeral infrastructure. Automation and certificate lifecycle management tools have become essential.</p>
+
+                <h3>Trusted Certificate Authorities Problem</h3>
+
+                <p>PKI's security depends on the trustworthiness of certificate authorities. However, the ecosystem includes hundreds of CAs globally, and trust is often implicit (pre-installed in operating systems) rather than explicitly chosen. History shows that this trust can be violated: CAs have been hacked, compromised, or coerced into issuing fraudulent certificates.</p>
+
+                <p>Additionally, any CA in the trust chain can issue certificates for any domain. A CA you've never heard of can issue a certificate claiming to be your bank if no mechanisms prevent it.</p>
+
+                <h3>Short-Lived Certificates and ACME</h3>
+
+                <p>Response to these challenges has included moving to short-lived certificates that expire quickly (days or hours rather than years). This reduces the window where a stolen or fraudulently-issued certificate can be exploited.</p>
+
+                <p>The Automated Certificate Management Environment (ACME) protocol enables automated certificate provisioning and renewal, making short-lived certificate deployment practical. This is critical for modern infrastructure where manual certificate management is impossible.</p>
+
+                <h2>Zero-Trust Architecture and PKI</h2>
+
+                <p>Zero-trust security models assume no network is inherently trusted. Instead of trusting network boundaries, zero-trust verifies identity and evaluates context before granting access. PKI is fundamental to zero-trust implementation.</p>
+
+                <h3>Mutual TLS (mTLS) for Service-to-Service Communication</h3>
+
+                <p>In traditional TLS, only servers present certificates; clients trust any server with a valid certificate. In mutual TLS, both client and server present certificates to each other. This enables organizations to verify that services communicating are actually authorized to do so, rather than assuming anything within the network boundary is trusted.</p>
+
+                <p>Service meshes implement mTLS at scale, automatically injecting certificates and handling certificate lifecycle, enabling zero-trust network policies at scale.</p>
+
+                <h3>Certificate-Based Device and User Authentication</h3>
+
+                <p>Rather than username/password authentication, zero-trust systems often use certificate-based authentication. Devices and users present certificates proving their identity, and access decisions evaluate whether they should access specific resources.</p>
+
+                <p>This requires:</p>
+
+                <ul>
+                    <li>Certificates provisioned to authorized devices and users</li>
+                    <li>Continuous verification that certificates are current and not revoked</li>
+                    <li>Rapid certificate revocation when devices are lost or users leave the organization</li>
+                </ul>
+
+                <h2>Building Effective PKI</h2>
+
+                <p>Effective PKI requires technical, operational, and organizational foundations.</p>
+
+                <h3>Technical Requirements</h3>
+
+                <ul>
+                    <li><strong>Key Security:</strong> Private keys must be protected through secure storage (hardware security modules, key vaults) and access controls</li>
+                    <li><strong>Certificate Lifecycle:</strong> Automated provisioning, renewal, and revocation to manage certificates at scale</li>
+                    <li><strong>Validation Infrastructure:</strong> Systems to validate certificates are authentic and current</li>
+                    <li><strong>Audit and Monitoring:</strong> Comprehensive logging of certificate creation, usage, and revocation</li>
+                </ul>
+
+                <h3>Organizational Practices</h3>
+
+                <ul>
+                    <li><strong>Clear Policies:</strong> Define when and what certificates are used, who can request them, approval processes</li>
+                    <li><strong>Role Clarity:</strong> Who manages CAs, who manages certificates, who can revoke certificates</li>
+                    <li><strong>Training and Awareness:</strong> Understand PKI basics and the importance of protecting private keys</li>
+                    <li><strong>Regular Audits:</strong> Periodically audit certificate inventory, expiration dates, and usage</li>
+                </ul>
+
+                <h2>Conclusion</h2>
+
+                <p>Public Key Infrastructure provides the foundation for digital trust in modern systems. Through the elegant mathematics of public key cryptography and the structured trust relationships of certificate authorities, organizations can establish secure communication and verify identity at scale.</p>
+
+                <p>However, implementing effective PKI requires attention to technical details, operational discipline, and organizational commitment. The move from manual certificate management to automated provisioning and short-lived certificates represents significant operational improvement. The adoption of zero-trust architectures that leverage PKI for continuous verification rather than network-based trust represents an evolution in how organizations think about security.</p>
+
+                <p>As organizations continue digital transformation and move to cloud-native architectures, understanding PKI fundamentals and implementing modern PKI practices becomes increasingly critical. The technologies and protocols may evolve, but the fundamental principle—establishing trust through verified identity—remains central to digital security.</p>
+            </div>
+
+            <div data-lang="sv" style="display:none">
+                <p>I en allt mer digital värld är förmågan att etablera förtroende i digitala interaktioner avgörande. Organisationer och individer måste kunna lita på att digital kommunikation är autentisk, att data inte har manipulerats och att endast avsedda mottagare kan komma åt känslig information. Public Key Infrastructure (PKI) tillhandahåller de grundläggande mekanismerna för att etablera digitalt förtroende i stor skala.</p>
+
+                <p>PKI är inte ny teknik. De grundläggande koncepten utvecklades i slutet av 1970-talet med utvecklingen av kryptering med offentlig nyckel. Implementering och driftsättning av PKI har dock visat sig vara mycket mer utmanande än den eleganta matematiken bakom det. Många PKI-distributioner har kämpat med komplexitet, kostnader och organisatoriska utmaningar. Men då organisationer navigerar noll-förtroende-säkerhet, accelererad digital transformation och ökade cyberhot blir förståelsen för PKI-fundamentals allt mer kritisk.</p>
+
+                <h2>Kryptografiska grunder</h2>
+
+                <p>PKI bygger på kryptering med offentlig nyckel, som skiljer sig fundamentalt från symmetrisk kryptering som använts i millennier.</p>
+
+                <h3>Symmetrisk vs. asymmetrisk kryptering</h3>
+
+                <p>I symmetrisk kryptering krypterar och dekrypterar en enda delad hemlig nyckel data. Detta är beräkningseffektivt och lämpligt för att skydda data i vila eller under transit när parterna tidigare har delat en nyckel. Symmetrisk kryptering har dock ett grundläggande problem: hur delar parterna nyckeln på ett säkert sätt i första hand?</p>
+
+                <p>Kryptering med offentlig nyckel löser detta genom asymmetriska nyckelpar:</p>
+
+                <ul>
+                    <li><strong>Offentlig nyckel:</strong> Kan delas och distribueras fritt; används för att kryptera meddelanden eller verifiera digitala signaturer</li>
+                    <li><strong>Privat nyckel:</strong> Hålls hemlig av ägaren; används för att dekryptera meddelanden eller skapa digitala signaturer</li>
+                </ul>
+
+                <p>Matematiken för asymmetrisk kryptering säkerställer att endast innehavaren av en privat nyckel kan dekryptera meddelanden som är krypterade med motsvarande offentliga nyckel, eller skapa signaturer som kan verifieras med den offentliga nyckeln.</p>
+
+                <h3>Applikationer för kryptering med offentlig nyckel</h3>
+
+                <p>Kryptering med offentlig nyckel möjliggör två kritiska säkerhetsfunktioner:</p>
+
+                <ul>
+                    <li><strong>Konfidentialitet:</strong> Kryptera data med mottagarens offentliga nyckel; endast mottagaren med privat nyckel kan dekryptera</li>
+                    <li><strong>Autentisering och integritet:</strong> Signera data med din privata nyckel; mottagaren använder den offentliga nyckeln för att verifiera att signaturen kommer från dig och att data inte har ändrats</li>
+                </ul>
+
+                <p>Digitala signaturer är särskilt kraftfulla. Genom att signera data med en privat nyckel bevisar undertecknaren att de innehar denna nyckel samtidigt som de bevisar att data inte har ändrats efter signering. Mottagaren kan verifiera både källan och integriteten med endast den offentliga nyckeln—ingen anledning att överföra hemligheter.</p>
+
+                <h2>Förtroendeproblemet</h2>
+
+                <p>Medan kryptering med offentlig nyckel tillhandahåller eleganta matematiska lösningar skapar den ett nytt problem: hur vet du att en offentlig nyckel faktiskt tillhör den person eller enhet som hävdar att använda den?</p>
+
+                <h3>Man-in-the-middle-angrepp</h3>
+
+                <p>Föreställ dig att försöka kommunicera säkert med en kollega. Du får vad du tror är deras offentliga nyckel och krypterar ett meddelande med den. En angripare avlyssnar din kommunikation, ersätter den offentliga nyckeln med sin egen och vidarebefordrar den till din kollega. Du krypterar med angriparens nyckel, angriparen dekrypterar (lär sig meddelandet) och omkrypterar med din kollegas faktiska nyckel. Din kollega får meddelandet utan att veta att angriparen läste det under överföringen.</p>
+
+                <p>Detta man-in-the-middle-angrepp är möjligt just för att du har inget bevis på att den offentliga nyckeln tillhör din kollega. Den offentliga nyckeln är bara en sträng siffror; vem som helst skulle kunna generera ett nyckelpar som hävdar att tillhöra någon annan.</p>
+
+                <h3>Lösa förtroende genom certifikat</h3>
+
+                <p>Offentliga nyckelcertifikat löser detta problem genom en förtroendekedjа. Ett certifikat är ett digitalt signerat dokument som binder en offentlig nyckel till en identitet (en person, organisation eller system). Signaturen bevisar att en betrodd auktoritet verifierade identiteten innan certifikatet utfärdades.</p>
+
+                <p>Ett certifikat innehåller vanligtvis:</p>
+
+                <ul>
+                    <li>Ämnes-identitet (person eller system som certifikatet utfärdas till)</li>
+                    <li>Ämnets offentliga nyckel</li>
+                    <li>Utfärdares identitet (auktoriteten som verifierade och signerade certifikatet)</li>
+                    <li>Giltighetsperiod (när certifikatet är giltigt)</li>
+                    <li>Serienummer och annan teknisk information</li>
+                    <li>Digital signatur från utfärdare</li>
+                </ul>
+
+                <p>När du får ett certifikat kan du verifiera utfärdarens signatur med hjälp av utfärdarens offentliga nyckel. Detta bevisar att utfärdaren signerade det här certifikatet. Men hur litar du på utfärdarens offentliga nyckel? Genom deras certifikat, som är signerat av en certifikatauktoritet som du litar på.</p>
+
+                <h2>Public Key Infrastructure-arkitektur</h2>
+
+                <p>PKI är uppsättningen av roller, policies och procedurer för att skapa, hantera och använda offentliga nyckelcertifikat i stor skala.</p>
+
+                <h3>Certifikatauktoriteter</h3>
+
+                <p>En certifikatauktoritet (CA) är en betrodd enhet som verifierar identiteter och utfärdar digitala certifikat. CA:s offentliga nyckel distribueras brett (ofta förinstallerad i operativsystem och webbläsare) så vem som helst kan verifiera certifikat som CA har signerat.</p>
+
+                <p>CA:er utför kritiska funktioner:</p>
+
+                <ul>
+                    <li><strong>Identitetsverifiering:</strong> Validera att den enhet som begär certifikatet faktiskt äger den hävdade identiteten</li>
+                    <li><strong>Certifikatutfärdning:</strong> Skapa och digitalt signera certifikat som binder den verifierade identiteten till en offentlig nyckel</li>
+                    <li><strong>Hantering av nyckellivscykel:</strong> Upprätthålla säkra processer för nyckelgenerering och lagring</li>
+                    <li><strong>Certifikatåterkallelse:</strong> Upprätthålla listor över certifikat som inte längre är giltiga före utgång</li>
+                </ul>
+
+                <h3>Förtroendhierarki: Root, intermediate och slutentitets certifikat</h3>
+
+                <p>Certifikatförtroende formar en hierarki för att hantera risk. Root CA:er behåller nycklar offline i mycket säkra miljöer. Deras nycklar signerar mellancertifikat från intermediate CA:er. Intermediate CA:er utfärdar slutentitetscertifikat till användare, system eller applikationer.</p>
+
+                <p>Denna hierarki möjliggör:</p>
+
+                <ul>
+                    <li><strong>Riskirsolering:</strong> Om en intermediate CA komprometteras påverkas inte root-auktoritet</li>
+                    <li><strong>Operativ flexibilitet:</strong> Intermediate CA:er kan uppdateras eller roteras utan att påverka root CA</li>
+                    <li><strong>Skalbarhet:</strong> Flera intermediate CA:er kan utfärda certifikat parallellt, vilket undviker en enda flaskhals</li>
+                </ul>
+
+                <p>Förtroendekedjor förbinder slutentitetscertifikat med root-auktoriteter. När en slutentitets-certifikat verifieras genomgår valideringen kedjan: verifiera att slutentitets-signaturen skapades av intermediate CA, verifiera att intermediate certifikatets signatur skapades av root CA, verifiera att root CA är en som du litar på.</p>
+
+                <h2>TLS/SSL: Praktisk PKI-tillämpning</h2>
+
+                <p>Transport Layer Security (TLS) är den mest synliga och viktiga PKI-tillämpningen. Varje säker webbanslutning använder TLS för att etablera krypterad kommunikation och verifiera serveridentitet.</p>
+
+                <h3>TLS-handskakningsöversikt</h3>
+
+                <p>När du besöker en säker webbplats utför webbläsaren och servern en TLS-handskaksprocess:</p>
+
+                <ol>
+                    <li>Klient kontaktar server och begär säker anslutning</li>
+                    <li>Server svarar med sitt certifikat och offentlig nyckel</li>
+                    <li>Klient verifierar certifikat (kontrollerar signaturkedjor till betrodda root CA:er)</li>
+                    <li>Klient och server använder asymmetrisk kryptering för att förhandla om en delad sessionsnyckel</li>
+                    <li>Efterföljande kommunikation är krypterad med den förhandlade sessionsnyckeln (symmetrisk kryptering)</li>
+                </ol>
+
+                <p>Denna design utnyttjar styrkorna från båda metoderna: asymmetrisk kryptering etablerar förtroende och förhandlar nycklar, medan symmetrisk kryptering tillhandahåller effektiv bulkkryptering.</p>
+
+                <h3>Certifikatvalidering i praktiken</h3>
+
+                <p>När webbläsare verifierar certifikat kontrollerar de:</p>
+
+                <ul>
+                    <li><strong>Signaturgiltighet:</strong> Certifikatsignatur skapades av en betrodd CA</li>
+                    <li><strong>Giltighetsperiod:</strong> Certifikatet är för närvarande giltigt (inte utgånget eller ännu inte giltigt)</li>
+                    <li><strong>Återkallelsestatus:</strong> Certifikatet har inte återkallats av CA:n</li>
+                    <li><strong>Domänmatchning:</strong> Certifikatets ämne motsvarar den domän som besöks</li>
+                    <li><strong>Utökad validering:</strong> För mycket känsliga webbplatser utförde CA:n förbättrad identitetsverifiering</li>
+                </ul>
+
+                <p>Certifikatåterkallelse är särskilt viktig. Om en privat nyckel är komprometterad kan CA:n återkalla certifikatet, placera det på en certifikatåterkallelselista (CRL) eller använda Online Certificate Status Protocol (OCSP) för att indikera att certifikatet inte längre är giltigt.</p>
+
+                <h2>Moderna PKI-utmaningar</h2>
+
+                <p>Även om PKI har möjliggjort säker digital kommunikation i årtionden har moderna hot och krav skapat nya utmaningar.</p>
+
+                <h3>Certifikatproliferation och hantering</h3>
+
+                <p>Moderna organisationer distribuerar certifikat över en omfattande infrastruktur: webbservrar, appservrar, mikrotjänster, IoT-enheter och interna system. Att hantera tusentals eller miljontals certifikat, spåra utgångsdatum och automatisera förnyelse har blivit en betydande operativ utmaning. Övergången till molninfrastruktur och containerisering förvärrar detta då system skapas och förstörs snabbt.</p>
+
+                <p>Traditionella PKI-processer utformade för ett fåtal webbservrar kan inte skalas till miljöer med kontinuerlig distribution och kortvarig infrastruktur. Automatisering och verktyg för certifikatlivscykelhantering har blivit väsentliga.</p>
+
+                <h3>Betrodda certifikatauktoriteter-problem</h3>
+
+                <p>PKI:s säkerhet beror på certifikatauktoriteternas tillförlitlighet. Ekosystemet inkluderar dock hundratals CA:er globalt, och förtroende är ofta implicit (förinstallerat i operativsystem) snarare än uttryckligen valt. Historien visar att detta förtroende kan brytas: CA:er har hackats, komprometterats eller tvingats att utfärda falska certifikat.</p>
+
+                <p>Dessutom kan vilken CA som helst i förtroendkedjan utfärda certifikat för vilken domän som helst. En CA som du aldrig har hört om kan utfärda ett certifikat som hävdar att vara din bank om det inte finns mekanismer för att förhindra det.</p>
+
+                <h3>Kortlivade certifikat och ACME</h3>
+
+                <p>Svar på dessa utmaningar har inkluderat övergång till kortlivade certifikat som upphör snabbt (dagar eller timmar istället för år). Detta minskar tidsperioden då ett stulet eller felaktigt utfärdat certifikat kan utnyttjas.</p>
+
+                <p>ACME-protokollet (Automated Certificate Management Environment) möjliggör automatiserad certifikatprovisioning och förnyelse, vilket gör distribution av kortlivade certifikat praktisk. Detta är kritiskt för modern infrastruktur där manuell certifikathantering är omöjlig.</p>
+
+                <h2>Noll-förtroende-arkitektur och PKI</h2>
+
+                <p>Säkerhetssystem med noll-förtroende antar att inget nätverk är naturligt betrott. Istället för att lita på nätverksgränser verifierar noll-förtroende identitet och utvärderar kontext innan åtkomst beviljas. PKI är grundläggande för implementering av noll-förtroende.</p>
+
+                <h3>Ömsesidig TLS (mTLS) för service-till-service-kommunikation</h3>
+
+                <p>I traditionell TLS presenterar endast servrar certifikat; klienter litar på vilken server som helst med ett giltigt certifikat. I ömsesidig TLS presenterar både klient och server certifikat för varandra. Detta möjliggör organisationer att verifiera att tjänster som kommunicerar faktiskt är auktoriserade att göra det, snarare än att anta att allt inom nätverksgränsen är betrodd.</p>
+
+                <p>Servicenät implementerar mTLS i stor skala, automatiskt injicerar certifikat och hanterar certifikatlivscykel, vilket möjliggör noll-förtroende-nätverkspolicyer i stor skala.</p>
+
+                <h3>Certifikatbaserad enhet och användarautentisering</h3>
+
+                <p>Istället för användarnamn/lösenordsautentisering använder noll-förtroende-system ofta certifikatbaserad autentisering. Enheter och användare presenterar certifikat som bevisar deras identitet, och åtkomstbeslut utvärderar om de bör få åtkomst till specifika resurser.</p>
+
+                <p>Detta kräver:</p>
+
+                <ul>
+                    <li>Certifikat tillhandahållna till auktoriserade enheter och användare</li>
+                    <li>Kontinuerlig verifiering att certifikat är aktuella och inte återkallda</li>
+                    <li>Snabb certifikatåterkallelse när enheter går förlorade eller användare lämnar organisationen</li>
+                </ul>
+
+                <h2>Bygga effektiv PKI</h2>
+
+                <p>Effektiv PKI kräver tekniska, operativa och organisatoriska grunder.</p>
+
+                <h3>Tekniska krav</h3>
+
+                <ul>
+                    <li><strong>Nyckelkälla:</strong> Privata nycklar måste skyddas genom säker lagring (hårdvarusäkerhetmoduler, nyckelvalv) och åtkomstkontroller</li>
+                    <li><strong>Certifikatlivscykel:</strong> Automatiserad provisioning, förnyelse och återkallelse för att hantera certifikat i stor skala</li>
+                    <li><strong>Valideringinfrastruktur:</strong> System för att validera att certifikat är autentiska och aktuella</li>
+                    <li><strong>Granskning och övervakning:</strong> Omfattande loggning av certifikatvåting, användning och återkallelse</li>
+                </ul>
+
+                <h3>Organisatoriska metoder</h3>
+
+                <ul>
+                    <li><strong>Tydliga policyer:</strong> Definiera när och vilka certifikat som används, vem som kan begära dem, godkännandeprocesser</li>
+                    <li><strong>Rollklarhet:</strong> Vem hanterar CA:er, vem hanterar certifikat, vem kan återkalla certifikat</li>
+                    <li><strong>Träning och medvetenhet:</strong> Förstå PKI-fundamentals och vikten av att skydda privata nycklar</li>
+                    <li><strong>Regelbundna revisioner:</strong> Granska periodiskt certifikatinventering, utgångsdatum och användning</li>
+                </ul>
+
+                <h2>Avslutning</h2>
+
+                <p>Public Key Infrastructure tillhandahåller grunden för digitalt förtroende i moderna system. Genom den eleganta matematiken från asymmetrisk kryptering och de strukturerade förtroenderelationerna från certifikatauktoriteter kan organisationer etablera säker kommunikation och verifiera identitet i stor skala.</p>
+
+                <p>Implementering av effektiv PKI kräver dock uppmärksamhet på tekniska detaljer, operativ disciplin och organisatorisk engagemang. Övergången från manuell certifikathantering till automatiserad provisioning och kortlivade certifikat representerar betydande operativ förbättring. Adoptionen av noll-förtroende-arkitekturer som använder PKI för kontinuerlig verifiering snarare än nätverksbaserat förtroende representerar en utveckling i hur organisationer tänker på säkerhet.</p>
+
+                <p>När organisationer fortsätter digital transformation och flyttar till molnbaserad arkitektur blir förståelsen för PKI-fundamentals och implementering av moderna PKI-metoder allt viktigare. Teknologierna och protokollen kan utvecklas, men den grundläggande principen—att etablera förtroende genom verifierad identitet—förblir central för digital säkerhet.</p>
+            </div>
+        </article>
+
+        <footer>
+            <p><strong>Claes-Philip Staiger</strong> is a solutions architect and enterprise transformation specialist with over 20 years of experience designing and implementing complex systems. He focuses on enterprise architecture, security practices, and helping organizations navigate digital transformation.</p>
+        </footer>
+    </div>
+
+    <script>
+        function setLang(lang) {
+            document.querySelectorAll('[data-lang]').forEach(el => {
+                el.style.display = el.getAttribute('data-lang') === lang ? '' : 'none';
+            });
+            document.getElementById('btn-en').classList.toggle('inactive', lang !== 'en');
+            document.getElementById('btn-sv').classList.toggle('inactive', lang !== 'sv');
+            document.documentElement.lang = lang;
+        }
+    </script>
+</body>
+</html>
